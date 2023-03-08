@@ -9,8 +9,17 @@ import SpriteKit
 import GameplayKit
 
 class GameScene: SKScene {
+    var ball = SKShapeNode()
+    var paddle = SKSpriteNode()
+    
     override func didMove(to view: SKView) {
         createBackround()
+        resetGame()
+    }
+    
+    func resetGame() {
+        makeBall() //happens before game starts
+        makePaddle()
     }
     
     func createBackround() {
@@ -26,5 +35,35 @@ class GameScene: SKScene {
             let moveForever = SKAction.repeatForever(moveLoop)
             starsBackround.run(moveForever)
         }
+    }
+    
+    func makeBall() {
+        ball.removeFromParent()     //remove ball if exists
+        ball = SKShapeNode(circleOfRadius: 10)
+        ball.position = CGPoint(x: frame.midX, y: frame.midY)
+        ball.strokeColor = .black
+        ball.fillColor = .yellow
+        ball.name = "ball"
+        
+        ball.physicsBody = SKPhysicsBody(circleOfRadius: 10) //physics shape matches ball image
+        ball.physicsBody?.isDynamic = false //ignores all forces and impulses
+        ball.physicsBody?.usesPreciseCollisionDetection = true  //use precise collison detection
+        ball.physicsBody?.friction = 0 // no loss of energy from friction
+        ball.physicsBody?.affectedByGravity = false  //gravity is not a factor
+        ball.physicsBody?.restitution = 1 //bounces fully of other objects
+        ball.physicsBody?.linearDamping = 0 //does not slow down overtime
+        ball.physicsBody?.contactTestBitMask = (ball.physicsBody?.collisionBitMask)!
+        
+        addChild(ball) //add ball object to view
+    }
+    
+    func makePaddle() {
+        paddle.removeFromParent() //remove paddle if exists
+        paddle = SKSpriteNode(color: .white, size: CGSize(width: frame.width/4, height: 20))
+        paddle.position = CGPoint(x: frame.midX, y: frame.midY + 125)
+        paddle.name = "Paddle"
+        paddle.physicsBody = SKPhysicsBody(rectangleOf: paddle.size)
+        paddle.physicsBody?.isDynamic = false
+        addChild(paddle)
     }
 }
