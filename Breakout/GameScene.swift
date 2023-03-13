@@ -35,6 +35,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             let location = touch.location(in: self)
             if playingGame {
                 paddle.position.x = location.x
+                paddle.position.y = location.y //paddle can move in y direction
             }
             else {
                 for node in nodes(at: location) {
@@ -56,6 +57,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             let location = touch.location(in: self)
             if playingGame {
                 paddle.position.x = location.x
+                paddle.position.y = location.y // paddle can move in y direction
             }
         }
     }
@@ -77,6 +79,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             if contact.bodyA.node == brick ||
                 contact.bodyB.node == brick {
                 score += 1
+                // increase ball velocity by %2
+                ball.physicsBody!.velocity.dx *= CGFloat(1.02)
+                ball.physicsBody!.velocity.dy *= CGFloat(1.02)
                 updateLabels()
                 if brick.color == .blue {
                     brick.color = .orange //blue turns into orange
@@ -116,7 +121,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     func kickBall() {
         ball.physicsBody?.isDynamic = true
-        ball.physicsBody?.applyImpulse(CGVector(dx: 3, dy: 5))
+        ball.physicsBody?.applyImpulse(CGVector(dx: Int.random(in: -5...5), dy: 5))
     }
     
     func updateLabels() {
@@ -208,7 +213,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             let y = Int(frame.maxY) - 65 - (r * 25)
             for i in 0..<count {
                 let x = i * 55 + xOffset
-                makeBrick(x: x, y: y, color: colors[r])
+                makeBrick(x: x, y: y, color: colors.randomElement()!) //random brick color in each row
             }
         }
     }
